@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EchoLens - 日常英語聽說練習</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        warmbg: '#FBF9F5',
+                        cardbg: '#FFFFFF',
+                        primary: '#8C7A6B',
+                        primaryhover: '#736354',
+                        accent: '#D4C5B9',
+                        softgreen: '#E8F0EC',
+                        softred: '#FCE8E6',
+                        darktext: '#3D3833',
+                        mutedtext: '#7A726A',
+                        sand: '#F4EFEA',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            background-color: #FBF9F5;
+            color: #3D3833;
+            font-family: 'Inter', sans-serif;
+        }
+        .transition-all-custom {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F4EFEA;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D4C5B9;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col justify-between selection:bg-[#D4C5B9] selection:text-[#3D3833]">
+
+    <!-- Top Navigation / Header -->
+    <header class="w-full bg-[#FFFFFF] border-b border-[#EAE3DC] px-6 py-4 shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
+                <div class="w-10 h-10 rounded-xl bg-[#8C7A6B] text-white flex items-center justify-center shadow-md">
+                    <i class="fa-solid fa-headphones-simple text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-[#3D3833]">EchoLens 英語聽說</h1>
+                    <p class="text-xs text-[#7A726A]">情境式聽力與口說日常訓練</p>
+                </div>
+            </div>
+            
+            <!-- Navigation Tabs -->
+            <nav class="flex items-center bg-[#F4EFEA] p-1.5 rounded-xl gap-1 text-sm font-medium">
+                <button onclick="switchTab('home')" id="nav-home" class="px-4 py-2 rounded-lg transition-all-custom text-[#3D3833] bg-white shadow-sm">
+                    <i class="fa-solid fa-house mr-1.5"></i>首頁主題
+                </button>
+                <button onclick="switchTab('practice')" id="nav-practice" class="px-4 py-2 rounded-lg transition-all-custom text-[#7A726A] hover:text-[#3D3833]">
+                    <i class="fa-solid fa-gamepad mr-1.5"></i>互動練習
+                </button>
+                <button onclick="switchTab('stats')" id="nav-stats" class="px-4 py-2 rounded-lg transition-all-custom text-[#7A726A] hover:text-[#3D3833]">
+                    <i class="fa-solid fa-chart-pie mr-1.5"></i>學習統計
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container Area -->
+    <main class="flex-grow max-w-6xl w-full mx-auto p-4 sm:p-6 my-auto">
+
+        <!-- TAB 1: HOME & TOPIC SELECTION -->
+        <section id="tab-home" class="space-y-6">
+            <!-- Welcome Banner -->
+            <div class="bg-gradient-to-r from-[#F4EFEA] to-[#EAE3DC] p-6 sm:p-8 rounded-3xl border border-[#E0D7CD] shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="space-y-3 text-center md:text-left">
+                    <span class="bg-[#8C7A6B] text-white text-xs px-3 py-1 rounded-full font-medium tracking-wide inline-block">日常英語生活圈</span>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-[#3D3833]">聽說雙向練習，輕鬆掌握日常實用英語對話</h2>
+                    <p class="text-[#7A726A] max-w-xl text-sm sm:text-base leading-relaxed">
+                        精選餐廳點餐、旅遊觀光、飯店住宿、日常購物、醫療求助與交通出行等核心情境。結合聆聽辨識與口說發音評測，助您自信開口說英語。
+                    </p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <button onclick="startQuickRandomPractice()" class="bg-[#8C7A6B] hover:bg-[#736354] text-white font-medium px-6 py-3 rounded-xl shadow-md transition-all-custom flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-play"></i>快速開始隨機練習
+                    </button>
+                </div>
+            </div>
+
+            <!-- Topic Cards Grid -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-bold text-[#3D3833] flex items-center gap-2">
+                        <i class="fa-solid fa-layer-group text-[#8C7A6B]"></i>選擇練習情境主題
+                    </h3>
+                    <span class="text-xs text-[#7A726A]" id="total-items-count">載入中...</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="topics-container">
+                    <!-- Topics generated dynamically via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: INTERACTIVE PRACTICE ARENA -->
+        <section id="tab-practice" class="hidden space-y-6">
+            <!-- Practice Header / Breadcrumb -->
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white p-4 rounded-2xl border border-[#EAE3DC] shadow-sm gap-4">
+                <div class="flex items-center gap-3">
+                    <button onclick="switchTab('home')" class="w-10 h-10 rounded-xl bg-[#F4EFEA] hover:bg-[#EAE3DC] text-[#3D3833] flex items-center justify-center transition-all-custom">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <div>
+                        <div class="text-xs font-semibold text-[#8C7A6B] uppercase tracking-wider" id="active-topic-tag">主題標籤</div>
+                        <h3 class="text-lg font-bold text-[#3D3833]" id="active-topic-title">載入中...</h3>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+                    <div class="bg-[#F4EFEA] px-3 py-1.5 rounded-xl text-xs font-medium text-[#7A726A]">
+                        進度：<span id="current-question-index" class="font-bold text-[#3D3833]">1</span> / <span id="total-question-count">10</span>
+                    </div>
+                    <!-- Mode Switcher Buttons inside Practice -->
+                    <div class="flex bg-[#F4EFEA] p-1 rounded-xl text-xs">
+                        <button onclick="setPracticeMode('listening')" id="mode-btn-listening" class="px-3 py-1.5 rounded-lg font-medium transition-all-custom bg-white shadow-sm text-[#3D3833]">聽力辨識</button>
+                        <button onclick="setPracticeMode('speaking')" id="mode-btn-speaking" class="px-3 py-1.5 rounded-lg font-medium transition-all-custom text-[#7A726A]">口說朗讀</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Card Area -->
+            <div class="bg-white rounded-3xl p-6 sm:p-10 border border-[#EAE3DC] shadow-sm relative overflow-hidden max-w-3xl mx-auto">
+                
+                <!-- Feedback Overlay Banner inside card -->
+                <div id="feedback-banner" class="hidden mb-6 p-4 rounded-2xl text-sm font-medium flex items-center gap-3 transition-all-custom">
+                    <i id="feedback-icon" class="fa-solid text-lg"></i>
+                    <div id="feedback-text">回饋訊息</div>
+                </div>
+
+                <!-- MODE A: LISTENING & MULTIPLE CHOICE / SPELL -->
+                <div id="practice-mode-listening-content" class="space-y-8">
+                    <div class="text-center space-y-4 py-4">
+                        <p class="text-xs font-semibold text-[#7A726A] tracking-wider uppercase">點擊播放聆聽發音，然後選擇正確的中文字義</p>
+                        <div class="inline-flex items-center justify-center">
+                            <button onclick="playCurrentAudio()" class="w-24 h-24 rounded-full bg-[#F4EFEA] hover:bg-[#EAE3DC] text-[#8C7A6B] flex flex-col items-center justify-center shadow-inner transition-all-custom transform active:scale-95 group border-2 border-[#D4C5B9]">
+                                <i class="fa-solid fa-volume-high text-3xl group-hover:scale-110 transition-transform"></i>
+                                <span class="text-[10px] font-bold mt-1 text-[#7A726A]">播放聲音</span>
+                            </button>
+                        </div>
+                        <div>
+                            <h4 id="listening-hint-text" class="text-2xl font-bold text-[#3D3833] tracking-wide mt-2">? ? ?</h4>
+                            <p class="text-xs text-[#7A726A] mt-1" id="listening-phonetic">[ 點擊喇叭開始測驗 ]</p>
+                        </div>
+                    </div>
+
+                    <!-- Multiple Choice Options -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="mc-options-container">
+                        <!-- Options injected dynamically -->
+                    </div>
+                </div>
+
+                <!-- MODE B: SPEAKING & PRONUNCIATION CHALLENGE -->
+                <div id="practice-mode-speaking-content" class="hidden space-y-8 text-center py-4">
+                    <div class="space-y-3">
+                        <span class="bg-[#F4EFEA] text-[#8C7A6B] text-xs px-3 py-1 rounded-full font-medium inline-block">口說朗讀挑戰</span>
+                        <h4 class="text-3xl font-bold text-[#3D3833]" id="speaking-target-word">Hello</h4>
+                        <p class="text-sm text-[#7A726A]" id="speaking-target-meaning">中文解釋：你好</p>
+                    </div>
+
+                    <div class="bg-[#FBF9F5] p-6 rounded-2xl border border-[#EAE3DC] max-w-md mx-auto space-y-4">
+                        <div class="flex justify-center items-center gap-3">
+                            <button onclick="playCurrentAudio()" class="px-4 py-2 bg-white border border-[#D4C5B9] text-[#3D3833] rounded-xl text-xs font-medium hover:bg-[#F4EFEA] transition-all-custom flex items-center gap-2 shadow-sm">
+                                <i class="fa-solid fa-volume-high text-[#8C7A6B]"></i>示範發音
+                            </button>
+                            <span class="text-xs text-[#7A726A]">|</span>
+                            <span id="speech-recognition-status" class="text-xs text-[#7A726A] font-medium">請點擊下方麥克風開始錄音</span>
+                        </div>
+
+                        <!-- Big Mic Button -->
+                        <div class="flex justify-center py-2">
+                            <button id="mic-record-btn" onclick="toggleSpeechRecognition()" class="w-20 h-20 rounded-full bg-[#8C7A6B] hover:bg-[#736354] text-white flex items-center justify-center shadow-lg transition-all-custom transform active:scale-95 relative">
+                                <i id="mic-icon" class="fa-solid fa-microphone text-2xl"></i>
+                                <div id="mic-pulse" class="absolute inset-0 rounded-full bg-[#8C7A6B] opacity-0 animate-ping pointer-events-none"></div>
+                            </button>
+                        </div>
+
+                        <div class="text-xs text-[#7A726A]">
+                            您說的語音辨識結果：<span id="recognized-speech-result" class="font-bold text-[#3D3833]">（尚未發音）</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Next Button Footer inside card -->
+                <div class="mt-8 pt-4 border-t border-[#EAE3DC] flex justify-between items-center">
+                    <button onclick="replayCurrentItem()" class="text-xs text-[#7A726A] hover:text-[#3D3833] font-medium flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate-right"></i>再次聆聽 / 重試
+                    </button>
+                    <button id="next-question-btn" onclick="nextQuestion()" class="hidden bg-[#8C7A6B] hover:bg-[#736354] text-white px-6 py-2.5 rounded-xl font-medium text-sm transition-all-custom shadow-sm flex items-center gap-2">
+                        下一題 <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 3: STATISTICS & HISTORY DASHBOARD -->
+        <section id="tab-stats" class="hidden space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-3xl border border-[#EAE3DC] shadow-sm space-y-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-[#3D3833]">學習成效與統計儀表板</h3>
+                        <p class="text-xs text-[#7A726A] mt-1">追蹤您的每日練習總題數、答對率與歷史紀錄</p>
+                    </div>
+                    <button onclick="clearLocalStorageData()" class="px-4 py-2 rounded-xl bg-[#FCE8E6] text-[#A63A3A] hover:bg-[#F8D7D5] text-xs font-medium transition-all-custom flex items-center gap-2">
+                        <i class="fa-solid fa-trash-can"></i>清除學習紀錄
+                    </button>
+                </div>
+
+                <!-- Stat Cards Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-[#FBF9F5] p-5 rounded-2xl border border-[#EAE3DC] space-y-1">
+                        <p class="text-xs text-[#7A726A] font-medium">總練習題數</p>
+                        <p class="text-3xl font-bold text-[#3D3833]" id="stat-total-count">0</p>
+                    </div>
+                    <div class="bg-[#FBF9F5] p-5 rounded-2xl border border-[#EAE3DC] space-y-1">
+                        <p class="text-xs text-[#7A726A] font-medium">答對題數</p>
+                        <p class="text-3xl font-bold text-[#4B7356]" id="stat-correct-count">0</p>
+                    </div>
+                    <div class="bg-[#FBF9F5] p-5 rounded-2xl border border-[#EAE3DC] space-y-1">
+                        <p class="text-xs text-[#7A726A] font-medium">總正確率</p>
+                        <p class="text-3xl font-bold text-[#3D3833]" id="stat-accuracy-rate">0%</p>
+                    </div>
+                    <div class="bg-[#FBF9F5] p-5 rounded-2xl border border-[#EAE3DC] space-y-1">
+                        <p class="text-xs text-[#7A726A] font-medium">完成主題數</p>
+                        <p class="text-3xl font-bold text-[#8C7A6B]" id="stat-themes-completed">0</p>
+                    </div>
+                </div>
+
+                <!-- Recent History Table -->
+                <div class="space-y-3 pt-4">
+                    <h4 class="text-sm font-bold text-[#3D3833] flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left text-[#8C7A6B]"></i>近期練習紀錄
+                    </h4>
+                    <div class="overflow-x-auto rounded-2xl border border-[#EAE3DC]">
+                        <table class="w-full text-left text-sm text-[#3D3833]">
+                            <thead class="bg-[#F4EFEA] text-xs font-semibold text-[#7A726A] uppercase tracking-wider border-b border-[#EAE3DC]">
+                                <tr>
+                                    <th class="px-4 py-3">時間</th>
+                                    <th class="px-4 py-3">情境主題</th>
+                                    <th class="px-4 py-3">模式</th>
+                                    <th class="px-4 py-3">答題結果</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body" class="divide-y divide-[#EAE3DC] bg-white">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full bg-[#FFFFFF] border-t border-[#EAE3DC] py-4 px-6 text-center text-xs text-[#7A726A]">
+        <p>EchoLens 英語聽說練習應用程式 &copy; 2026 | 支援 Web Speech API 語音合成與語音辨識</p>
+    </footer>
+
+    <!-- Custom Message Box Modal (No alert/confirm used) -->
+    <div id="custom-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-xl border border-[#EAE3DC] space-y-4 text-center">
+            <div id="modal-icon-container" class="w-16 h-16 rounded-full bg-[#F4EFEA] text-[#8C7A6B] flex items-center justify-center mx-auto text-2xl shadow-inner">
+                <i id="modal-icon" class="fa-solid fa-circle-info"></i>
+            </div>
+            <div class="space-y-2">
+                <h3 id="modal-title" class="text-xl font-bold text-[#3D3833]">提示訊息</h3>
+                <p id="modal-message" class="text-sm text-[#7A726A] leading-relaxed">訊息內容</p>
+            </div>
+            <div class="pt-2">
+                <button onclick="closeModal()" class="w-full bg-[#8C7A6B] hover:bg-[#736354] text-white py-3 rounded-xl font-medium text-sm transition-all-custom shadow-md">
+                    我知道了
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Data Store: Scenarios & Vocabulary / Phrases
+        const learningTopics = [
+            {
+                id: 'restaurant',
+                title: '餐廳點餐 (Restaurant Ordering)',
+                desc: '點餐、詢問推薦、結帳與餐點客製化常用對話與單字。',
+                icon: 'fa-utensils',
+                color: 'bg-[#F4EFEA] text-[#8C7A6B]',
+                items: [
+                    { en: 'Could I see the menu, please?', zh: '請給我看一下菜單好嗎？', phonetic: '/kʊd aɪ siː ðə ˈmɛnuː pliːz/' },
+                    { en: 'I would like to order a cheeseburger.', zh: '我想點一個起司漢堡。', phonetic: '/aɪ wʊd laɪk tuː ˈɔːrdər ə ˈtʃiːzˌbɜːrɡər/' },
+                    { en: 'Is this dish spicy?', zh: '這道菜會辣嗎？', phonetic: '/ɪz ðɪs dɪʃ ˈspaɪsi/' },
+                    { en: 'Check, please.', zh: '買單，謝謝。', phonetic: '/tʃɛk pliːz/' },
+                    { en: 'Do you have vegetarian options?', zh: '你們有素食選項嗎？', phonetic: '/duː juː hæv ˌvɛdʒəˈtɛriən ˈɑːpʃənz/' },
+                    { en: 'Can I have some water, please?', zh: '請給我一些水好嗎？', phonetic: '/kən aɪ hæv sʌm ˈwɔːtər pliːz/' },
+                    { en: 'That will be all, thank you.', zh: '這樣就可以了，謝謝。', phonetic: '/ðæt wʊl biː ɔːl ˈθæŋk juː/' },
+                    { en: 'Excuse me, our food hasn’t arrived yet.', zh: '不好意思，我們的餐點還沒送來。', phonetic: '/ɪkˈskjuːz miː ˈaʊər fuːd ˈhæzənt əˈraɪvd jɛt/' }
+                ]
+            },
+            {
+                id: 'travel',
+                title: '機場與旅遊 (Airport & Travel)',
+                desc: '辦理登機、安檢、問路與搭乘大眾運輸的實用英文。',
+                icon: 'fa-plane-departure',
+                color: 'bg-[#F4EFEA] text-[#8C7A6B]',
+                items: [
+                    { en: 'Where is the boarding gate?', zh: '登機門在哪裡？', phonetic: '/wɛr ɪz ðə ˈbɔːrdɪŋ ɡeɪt/' },
+                    { en: 'I need to check my luggage.', zh: '我需要托運行李。', phonetic: '/aɪ niːd tuː tʃɛk maɪ ˈlʌɡɪdʒ/' },
+                    { en: 'Where can I find a taxi?', zh: '我在哪裡可以攔到計程車？', phonetic: '/wɛr kən aɪ faɪnd ə ˈtæksi/' },
+                    { en: 'Could you help me with directions?', zh: '可以幫我指一下路嗎？', phonetic: '/kʊd juː hɛlp miː wɪð dɪˈrɛkʃənz/' },
+                    { en: 'Is this seat taken?', zh: '這個座位有人坐嗎？', phonetic: '/ɪz ðɪs siːt ˈteɪkən/' },
+                    { en: 'What time does the train depart?', zh: '火車幾點發車？', phonetic: '/wʌt taɪm dʌz ðə treɪn dɪˈpɑːrt/' },
+                    { en: 'I lost my passport.', zh: '我弄丟我的護照了。', phonetic: '/aɪ lɔːst maɪ ˈpæspɔːrt/' },
+                    { en: 'How much is the ticket?', zh: '票多少錢？', phonetic: '/haʊ mʌtʃ ɪz ðə ˈtɪkɪt/' }
+                ]
+            },
+            {
+                id: 'hotel',
+                title: '飯店入住 (Hotel Booking)',
+                desc: '登記入住、詢問設施、退房與客房服務相關用語。',
+                icon: 'fa-hotel',
+                color: 'bg-[#F4EFEA] text-[#8C7A6B]',
+                items: [
+                    { en: 'I have a reservation under the name John.', zh: '我有以 John 名義預訂房間。', phonetic: '/aɪ hæv ə ˌrɛzərˈveɪʃən ˈʌndər ðə neɪm dʒɑːn/' },
+                    { en: 'What time is check-out?', zh: '退房時間是幾點？', phonetic: '/wʌt taɪm ɪz tʃɛk aʊt/' },
+                    { en: 'Could I have an extra blanket?', zh: '可以給我一條額外的毯子嗎？', phonetic: '/kʊd aɪ hæv ən ˈɛkstrə ˈblæŋkɪt/' },
+                    { en: 'Is breakfast included?', zh: '有包含早餐嗎？', phonetic: '/ɪz ˈbrɛkfəst ɪnˈkluːdɪd/' },
+                    { en: 'The air conditioner is not working.', zh: '冷氣壞掉了。', phonetic: '/ði ˈɛr kənˈdɪʃənər ɪz nɑːt ˈwɜːrkɪŋ/' },
+                    { en: 'Can I leave my luggage here?', zh: '我可以把行李寄放在這裡嗎？', phonetic: '/kən aɪ liːv maɪ ˈlʌɡɪdʒ hɪr/' },
+                    { en: 'Do you offer Wi-Fi in the room?', zh: '房間裡有提供無線網路嗎？', phonetic: '/duː juː ˈɔːfər ˈwaɪˌfaɪ ɪn ðə ruːm/' },
+                    { en: 'Please wake me up at 7 AM tomorrow.', zh: '請明天早上七點叫我起床。', phonetic: '/pliːz weɪk miː ʌp æt ˈsɛvən eɪm təˈmɑːroʊ/' }
+                ]
+            },
+            {
+                id: 'shopping',
+                title: '購物消費 (Shopping)',
+                desc: '詢問價格、試穿尺寸、折扣優惠與退換貨相關英文。',
+                icon: 'fa-bag-shopping',
+                color: 'bg-[#F4EFEA] text-[#8C7A6B]',
+                items: [
+                    { en: 'How much does this cost?', zh: '這個要多少錢？', phonetic: '/haʊ mʌtʃ dʌz ðɪs kɔːst/' },
+                    { en: 'Can I try this on?', zh: '我可以試穿這個嗎？', phonetic: '/kən aɪ traɪ ðɪs ɑːn/' },
+                    { en: 'Do you have this in a larger size?', zh: '這件有更大尺寸的嗎？', phonetic: '/duː juː hæv ðɪs ɪn ə ˈlɑːrdʒər saɪz/' },
+                    { en: 'Is there any discount on this item?', zh: '這個商品有任何折扣嗎？', phonetic: '/ɪz ðɛr ˈɛni ˈdɪskaʊnt ɑːn ðɪs ˈaɪtəm/' },
+                    { en: 'I am just browsing, thank you.', zh: '我只是隨便看看，謝謝。', phonetic: '/aɪ æm dʒʌst ˈbraʊzɪŋ θæŋk juː/' },
+                    { en: 'Do you accept credit cards?', zh: '你們接受信用卡嗎？', phonetic: '/duː juː əkˈsɛpt ˈkrɛdɪt kɑːrdz/' },
+                    { en: 'Can I get a receipt, please?', zh: '請給我一張收據好嗎？', phonetic: '/kən aɪ ɡɛt ə rɪˈsiːt pliːz/' },
+                    { en: 'I would like to return this shirt.', zh: '我想退掉這件襯衫。', phonetic: '/aɪ wʊd laɪk tuː rɪˈtɜːrn ðɪs ʃɜːrt/' }
+                ]
+            },
+            {
+                id: 'medical',
+                title: '醫療看診 (Medical & Hospital)',
+                desc: '描述症狀、領藥、掛號與緊急狀況常用表達法。',
+                icon: 'fa-[#8C7A6B] fa-user-doctor',
+                color: 'bg-[#F4EFEA] text-[#8C7A6B]',
+                items: [
+                    { en: 'I have a sore throat and a fever.', zh: '我喉嚨痛而且發燒了。', phonetic: '/aɪ hæv ə sɔːr θroʊt ænd ə ˈfiːvər/' },
+                    { en: 'Where is the nearest pharmacy?', zh: '最近的藥局在哪裡？', phonetic: '/wɛr ɪz ðə ˈnɪrəst ˈfɑːrməsi/' },
+                    { en: 'I feel dizzy and nauseous.', zh: '我感到頭暈而且想吐。', phonetic: '/aɪ fiːl ˈdɪzi ænd ˈnɔːʃəs/' },
+                    { en: 'How often should I take this medicine?', zh: '這個藥我多久該吃一次？', phonetic: '/haʊ ˈɔːfən ʃʊd aɪ teɪk ðɪs ˈmɛdɪsən/' },
+                    { en: 'I am allergic to penicillin.', zh: '我對盤尼西林過敏。', phonetic: '/aɪ æm əˈlɜːrdʒɪk tuː ˌpɛnɪˈsɪlɪn/' },
+                    { en: 'I need to see a doctor immediately.', zh: '我需要立刻看醫生。', phonetic: '/aɪ niːd tuː siː ə ˈdɑːktər ɪˈmiːdiətli/' },
+                    { en: 'My stomach really hurts.', zh: '我的胃真的很痛。', phonetic: '/maɪ ˈstʌmək ˈriːəli hɜːrts/' },
+                    { en: 'Could you please call an ambulance?', zh: '請幫我叫救護車好嗎？', phonetic: '/kʊd juː pliːz kɔːl ən ˈæmbjələns/' }
+                ]
+            },
+            {
+                id: 'transport',
+                title: '交通出行 (Transportation)',
+                desc: '搭乘公車、地鐵、租車與轉乘路程常用對話。',
+                icon: 'fa-bus',
+                color: 'bg-[#F4EFEA] text-[#8C7A6B]',
+                items: [
+                    { en: 'Which bus goes to the city center?', zh: '哪一班公車有到市中心？', phonetic: '/wɪtʃ bʌs ɡoʊz tuː ðə ˈsɪti ˈsɛntər/' },
+                    { en: 'How many stops until Central Station?', zh: '到中央車站還有幾站？', phonetic: '/haʊ ˈmɛni stɑːps ʌnˈtɪl ˈsɛntrəl ˈsteɪʃən/' },
+                    { en: 'I need to transfer to line 2.', zh: '我需要轉乘二號線。', phonetic: '/aɪ niːd tuː trænsˈfɜːr tuː laɪn tuː/' },
+                    { en: 'Please take me to this address.', zh: '請帶我到這個地址。', phonetic: '/pliːz teɪk miː tuː ðɪs ˈædrɛs/' },
+                    { en: 'Is there a subway map available?', zh: '這裡有提供地鐵路線圖嗎？', phonetic: '/ɪz ðɛr ə ˈsʌbweɪ mæp əˈveɪləbəl/' },
+                    { en: 'How long does the journey take?', zh: '這趟行程需要多久時間？', phonetic: '/haʊ lɔːŋ dʌz ðə ˈdʒɜːrni teɪk/' },
+                    { en: 'Where is the ticket vending machine?', zh: '自動售票機在哪裡？', phonetic: '/wɛr ɪz ðə ˈtɪkɪt ˈvɛndɪŋ məˈʃiːn/' },
+                    { en: 'You need to tap your card here.', zh: '您需要在此處感應刷卡。', phonetic: '/juː niːd tuː tæp jʊər kɑːrd hɪr/' }
+                ]
+            }
+        ];
+
+        // State variables
+        let currentTab = 'home';
+        let currentTopicId = null;
+        let currentPracticeMode = 'listening'; // 'listening' or 'speaking'
+        let currentItemsList = [];
+        let currentIndex = 0;
+        let sessionCorrectCount = 0;
+        let sessionTotalCount = 0;
+
+        // Speech Recognition setup
+        let recognition = null;
+        let isRecording = false;
+
+        // LocalStorage Data Init
+        function getStoredStats() {
+            const data = localStorage.getItem('echolens_stats');
+            if (data) {
+                try {
+                    return JSON.parse(data);
+                } catch (e) {
+                    return { total: 0, correct: 0, themesCompleted: 0, history: [] };
+                }
+            }
+            return { total: 0, correct: 0, themesCompleted: 0, history: [] };
+        }
+
+        function saveStatsToStorage(newRecord, isCorrect) {
+            let stats = getStoredStats();
+            stats.total += 1;
+            if (isCorrect) stats.correct += 1;
+            stats.history.unshift(newRecord); // Add to front
+            // Keep history max 50 items
+            if (stats.history.length > 50) stats.history.pop();
+            localStorage.setItem('echolens_stats', JSON.stringify(stats));
+            updateStatsUI();
+        }
+
+        function clearLocalStorageData() {
+            localStorage.removeItem('echolens_stats');
+            updateStatsUI();
+            showModal('清除成功', '您的所有歷史練習紀錄與統計數據已重設。', 'fa-trash-can');
+        }
+
+        // Initialization on Load
+        window.onload = function() {
+            renderTopicsGrid();
+            updateStatsUI();
+            setupSpeechRecognition();
+        };
+
+        // Tab Switching
+        function switchTab(tabName) {
+            currentTab = tabName;
+            document.getElementById('tab-home').classList.add('hidden');
+            document.getElementById('tab-practice').classList.add('hidden');
+            document.getElementById('tab-stats').classList.add('hidden');
+
+            document.getElementById('nav-home').className = "px-4 py-2 rounded-lg transition-all-custom text-[#7A726A] hover:text-[#3D3833]";
+            document.getElementById('nav-practice').className = "px-4 py-2 rounded-lg transition-all-custom text-[#7A726A] hover:text-[#3D3833]";
+            document.getElementById('nav-stats').className = "px-4 py-2 rounded-lg transition-all-custom text-[#7A726A] hover:text-[#3D3833]";
+
+            if (tabName === 'home') {
+                document.getElementById('tab-home').classList.remove('hidden');
+                document.getElementById('nav-home').className = "px-4 py-2 rounded-lg transition-all-custom text-[#3D3833] bg-white shadow-sm";
+            } else if (tabName === 'practice') {
+                document.getElementById('tab-practice').classList.remove('hidden');
+                document.getElementById('nav-practice').className = "px-4 py-2 rounded-lg transition-all-custom text-[#3D3833] bg-white shadow-sm";
+            } else if (tabName === 'stats') {
+                document.getElementById('tab-stats').classList.remove('hidden');
+                document.getElementById('nav-stats').className = "px-4 py-2 rounded-lg transition-all-custom text-[#3D3833] bg-white shadow-sm";
+                updateStatsUI();
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Render Topics Grid on Home
+        function renderTopicsGrid() {
+            const container = document.getElementById('topics-container');
+            container.innerHTML = '';
+            let totalItemsAll = 0;
+
+            learningTopics.forEach(topic => {
+                totalItemsAll += topic.items.length;
+                const card = document.createElement('div');
+                card.className = "bg-white p-6 rounded-3xl border border-[#EAE3DC] shadow-sm hover:shadow-md transition-all-custom flex flex-col justify-between space-y-4 group";
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="w-12 h-12 rounded-2xl ${topic.color} flex items-center justify-center text-xl shadow-inner">
+                                <i class="fa-solid ${topic.icon}"></i>
+                            </div>
+                            <span class="text-xs font-semibold bg-[#F4EFEA] text-[#7A726A] px-2.5 py-1 rounded-full">
+                                ${topic.items.length} 個實用句子
+                            </span>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-[#3D3833] group-hover:text-[#8C7A6B] transition-colors">${topic.title}</h4>
+                            <p class="text-xs text-[#7A726A] mt-1 leading-relaxed">${topic.desc}</p>
+                        </div>
+                    </div>
+                    <div class="pt-3 border-t border-[#EAE3DC] flex items-center justify-between">
+                        <button onclick="startPractice('${topic.id}', 'listening')" class="flex-1 bg-[#F4EFEA] hover:bg-[#EAE3DC] text-[#3D3833] text-xs font-medium py-2.5 px-3 rounded-xl transition-all-custom flex items-center justify-center gap-1.5 mr-2">
+                            <i class="fa-solid fa-headphones text-[#8C7A6B]"></i>聽力測驗
+                        </button>
+                        <button onclick="startPractice('${topic.id}', 'speaking')" class="flex-1 bg-[#8C7A6B] hover:bg-[#736354] text-white text-xs font-medium py-2.5 px-3 rounded-xl transition-all-custom flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-microphone"></i>口說挑戰
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            document.getElementById('total-items-count').innerText = `全站共 ${learningTopics.length} 大主題 / ${totalItemsAll} 句核心英語`;
+        }
+
+        // Start Random Practice
+        function startQuickRandomPractice() {
+            const randomTopic = learningTopics[Math.floor(Math.random() * learningTopics.length)];
+            const randomMode = Math.random() > 0.5 ? 'listening' : 'speaking';
+            startPractice(randomTopic.id, randomMode);
+        }
+
+        // Start Practice Session
+        function startPractice(topicId, mode) {
+            currentTopicId = topicId;
+            const topicObj = learningTopics.find(t => t.id === topicId);
+            if (!topicObj) return;
+
+            // Shuffle items copy
+            currentItemsList = [...topicObj.items].sort(() => Math.random() - 0.5);
+            currentIndex = 0;
+            
+            document.getElementById('active-topic-tag').innerText = topicObj.title.split(' ')[0];
+            document.getElementById('active-topic-title').innerText = topicObj.title;
+            document.getElementById('total-question-count').innerText = currentItemsList.length;
+
+            setPracticeMode(mode);
+            switchTab('practice');
+            loadCurrentQuestion();
+        }
+
+        // Switch Practice Mode (Listening vs Speaking)
+        function setPracticeMode(mode) {
+            currentPracticeMode = mode;
+            const btnListen = document.getElementById('mode-btn-listening');
+            const btnSpeak = document.getElementById('mode-btn-speaking');
+            const contentListen = document.getElementById('practice-mode-listening-content');
+            const contentSpeak = document.getElementById('practice-mode-speaking-content');
+
+            if (mode === 'listening') {
+                btnListen.className = "px-3 py-1.5 rounded-lg font-medium transition-all-custom bg-white shadow-sm text-[#3D3833]";
+                btnSpeak.className = "px-3 py-1.5 rounded-lg font-medium transition-all-custom text-[#7A726A]";
+                contentListen.classList.remove('hidden');
+                contentSpeak.classList.add('hidden');
+            } else {
+                btnListen.className = "px-3 py-1.5 rounded-lg font-medium transition-all-custom text-[#7A726A]";
+                btnSpeak.className = "px-3 py-1.5 rounded-lg font-medium transition-all-custom bg-white shadow-sm text-[#3D3833]";
+                contentListen.classList.add('hidden');
+                contentSpeak.classList.remove('hidden');
+            }
+            loadCurrentQuestion();
+        }
+
+        // Load Current Question
+        function loadCurrentQuestion() {
+            if (currentIndex >= currentItemsList.length) {
+                // Session Completed
+                showModal('恭喜完成！', `您已完成此主題的所有練習題，表現非常出色！`, 'fa-award');
+                switchTab('home');
+                return;
+            }
+
+            document.getElementById('current-question-index').innerText = currentIndex + 1;
+            hideFeedbackBanner();
+            document.getElementById('next-question-btn').classList.add('hidden');
+
+            const item = currentItemsList[currentIndex];
+
+            if (currentPracticeMode === 'listening') {
+                // Setup Listening Mode
+                document.getElementById('listening-hint-text').innerText = '🔊 點擊喇叭聆聽發音';
+                document.getElementById('listening-phonetic').innerText = item.phonetic;
+
+                // Generate Options (1 correct, 3 distractors)
+                const topicObj = learningTopics.find(t => t.id === currentTopicId);
+                let distractors = topicObj.items.filter(i => i.zh !== item.zh).sort(() => Math.random() - 0.5).slice(0, 3);
+                let options = [...distractors, item].sort(() => Math.random() - 0.5);
+
+                const optContainer = document.getElementById('mc-options-container');
+                optContainer.innerHTML = '';
+                options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = "p-4 rounded-2xl bg-[#FBF9F5] hover:bg-[#F4EFEA] border border-[#EAE3DC] text-left text-sm font-medium text-[#3D3833] transition-all-custom flex items-center justify-between group";
+                    btn.innerHTML = `
+                        <span>${opt.zh}</span>
+                        <i class="fa-regular fa-circle text-[#D4C5B9] group-hover:text-[#8C7A6B]"></i>
+                    `;
+                    btn.onclick = () => checkListeningAnswer(opt.zh === item.zh, btn, item.en);
+                    optContainer.appendChild(btn);
+                });
+
+                // Auto play audio on load
+                setTimeout(() => playCurrentAudio(), 400);
+
+            } else {
+                // Setup Speaking Mode
+                document.getElementById('speaking-target-word').innerText = item.en;
+                document.getElementById('speaking-target-meaning').innerText = `中文解釋：${item.zh} (${item.phonetic})`;
+                document.getElementById('recognized-speech-result.innerText') = '（尚未發音）';
+                document.getElementById('speech-recognition-status').innerText = '請點擊麥克風開始朗讀';
+                // Auto play voice hint
+                setTimeout(() => playCurrentAudio(), 400);
+            }
+        }
+
+        // Text To Speech (SpeechSynthesis)
+        function playCurrentAudio() {
+            if (!('speechSynthesis' in window)) {
+                showModal('瀏覽器不支援', '您的瀏覽器不支援語音合成功能。', 'fa-triangle-exclamation');
+                return;
+            }
+            window.speechSynthesis.cancel();
+            const item = currentItemsList[currentIndex];
+            const utterance = new SpeechSynthesisUtterance(item.en);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9; // Slightly slower for learning
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function replayCurrentItem() {
+            playCurrentAudio();
+        }
+
+        // Check Listening Answer
+        function checkListeningAnswer(isCorrect, buttonElement, correctText) {
+            // Disable all options
+            const buttons = document.querySelectorAll('#mc-options-container button');
+            buttons.forEach(b => b.disabled = true);
+
+            const topicObj = learningTopics.find(t => t.id === currentTopicId);
+
+            if (isCorrect) {
+                buttonElement.className = "p-4 rounded-2xl bg-[#E8F0EC] border border-[#A3C1AD] text-left text-sm font-semibold text-[#2D5A3F] flex items-center justify-between";
+                buttonElement.innerHTML += `<i class="fa-solid fa-circle-check text-[#4B7356]"></i>`;
+                showFeedbackBanner(true, `答對了！正確答案是：${correctText}`);
+                saveStatsToStorage({
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    theme: topicObj.title.split(' ')[0],
+                    mode: '聽力辨識',
+                    result: '正確'
+                }, true);
+            } else {
+                buttonElement.className = "p-4 rounded-2xl bg-[#FCE8E6] border border-[#EFA09B] text-left text-sm font-semibold text-[#A63A3A] flex items-center justify-between";
+                buttonElement.innerHTML += `<i class="fa-solid fa-circle-xmark text-[#D3534D]"></i>`;
+                showFeedbackBanner(false, `答錯囉！正確英文為：${correctText}`);
+                saveStatsToStorage({
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    theme: topicObj.title.split(' ')[0],
+                    mode: '聽力辨識',
+                    result: '錯誤'
+                }, false);
+            }
+
+            document.getElementById('next-question-btn').classList.remove('hidden');
+        }
+
+        // Speech Recognition Setup & Handling
+        function setupSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                console.warn("SpeechRecognition API not supported in this browser.");
+                return;
+            }
+            recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+
+            recognition.onstart = function() {
+                isRecording = true;
+                document.getElementById('mic-record-btn').classList.add('bg-[#A63A3A]');
+                document.getElementById('mic-pulse').classList.remove('opacity-0');
+                document.getElementById('speech-recognition-status').innerText = '正在聆聽您的發音...請清晰朗讀';
+            };
+
+            recognition.onresult = function(event) {
+                const speechResult = event.results[0][0].transcript.trim();
+                document.getElementById('recognized-speech-result').innerText = speechResult;
+                evaluateSpeakingResult(speechResult);
+            };
+
+            recognition.onerror = function(event) {
+                console.error("Speech recognition error", event.error);
+                document.getElementById('speech-recognition-status').innerText = '語音辨識發生錯誤或逾時，請重試';
+                stopRecognitionUI();
+            };
+
+            recognition.onend = function() {
+                stopRecognitionUI();
+            };
+        }
+
+        function toggleSpeechRecognition() {
+            if (!recognition) {
+                showModal('不支援語音辨識', '您的瀏覽器不支援 Web Speech Recognition API（建議使用 Chrome 或 Edge 瀏覽器）。', 'fa-triangle-exclamation');
+                return;
+            }
+            if (isRecording) {
+                recognition.stop();
+            } else {
+                try {
+                    recognition.start();
+                } catch(e) {
+                    console.error(e);
+                }
+            }
+        }
+
+        function stopRecognitionUI() {
+            isRecording = false;
+            const btn = document.getElementById('mic-record-btn');
+            if (btn) {
+                btn.classList.remove('bg-[#A63A3A]');
+                document.getElementById('mic-pulse').classList.add('opacity-0');
+            }
+        }
+
+        // Evaluate Speaking Input against Target Sentence
+        function evaluateSpeakingResult(userSpoken) {
+            const item = currentItemsList[currentIndex];
+            const cleanTarget = item.en.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+            const cleanUser = userSpoken.toLowerCase().replace(/[^a-z0-9 ]/g, '').trim();
+
+            // Simple match or similarity check
+            const topicObj = learningTopics.find(t => t.id === currentTopicId);
+            const isMatch = cleanUser.includes(cleanTarget) || cleanTarget.includes(cleanUser) || (cleanUser.length > 2 && cleanTarget.includes(cleanUser.substring(0, 4)));
+
+            if (isMatch) {
+                showFeedbackBanner(true, `太棒了！發音辨識正確：「${userSpoken}」`);
+                saveStatsToStorage({
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    theme: topicObj.title.split(' ')[0],
+                    mode: '口說挑戰',
+                    result: '正確'
+                }, true);
+            } else {
+                showFeedbackBanner(false, `發音可再加強。您說的是：「${userSpoken}」，正確目標是：${item.en}`);
+                saveStatsToStorage({
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                    theme: topicObj.title.split(' ')[0],
+                    mode: '口說挑戰',
+                    result: '需加強'
+                }, false);
+            }
+
+            document.getElementById('speech-recognition-status').innerText = '發音評測完成！';
+            document.getElementById('next-question-btn').classList.remove('hidden');
+        }
+
+        // Next Question Handler
+        function nextQuestion() {
+            currentIndex++;
+            loadCurrentQuestion();
+        }
+
+        // Feedback Banner Helpers
+        function showFeedbackBanner(isSuccess, message) {
+            const banner = document.getElementById('feedback-banner');
+            const icon = document.getElementById('feedback-icon');
+            const text = document.getElementById('feedback-text');
+
+            banner.classList.remove('hidden');
+            if (isSuccess) {
+                banner.className = "mb-6 p-4 rounded-2xl text-sm font-medium flex items-center gap-3 bg-[#E8F0EC] border border-[#A3C1AD] text-[#2D5A3F]";
+                icon.className = "fa-solid fa-circle-check text-lg text-[#4B7356]";
+            } else {
+                banner.className = "mb-6 p-4 rounded-2xl text-sm font-medium flex items-center gap-3 bg-[#FCE8E6] border border-[#EFA09B] text-[#A63A3A]";
+                icon.className = "fa-solid fa-circle-xmark text-lg text-[#D3534D]";
+            }
+            text.innerText = message;
+        }
+
+        function hideFeedbackBanner() {
+            document.getElementById('feedback-banner').classList.add('hidden');
+        }
+
+        // Update Statistics UI & History Table
+        function updateStatsUI() {
+            const stats = getStoredStats();
+            document.getElementById('stat-total-count').innerText = stats.total;
+            document.getElementById('stat-correct-count').innerText = stats.correct;
+            
+            const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+            document.getElementById('stat-accuracy-rate').innerText = accuracy + '%';
+            document.getElementById('stat-themes-completed').innerText = learningTopics.length;
+
+            // Render History Table
+            const tbody = document.getElementById('history-table-body');
+            tbody.innerHTML = '';
+
+            if (stats.history.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-6 text-center text-[#7A726A]">尚無練習紀錄，趕緊開始體驗聽力與口說測驗吧！</td></tr>`;
+                return;
+            }
+
+            stats.history.forEach(record => {
+                const tr = document.createElement('tr');
+                let badgeClass = "bg-[#E8F0EC] text-[#2D5A3F] px-2.5 py-1 rounded-full text-xs font-semibold";
+                if (record.result === '錯誤' || record.result === '需加強') {
+                    badgeClass = "bg-[#FCE8E6] text-[#A63A3A] px-2.5 py-1 rounded-full text-xs font-semibold";
+                }
+                tr.innerHTML = `
+                    <td class="px-4 py-3 text-xs text-[#7A726A]">${record.time}</td>
+                    <td class="px-4 py-3 font-medium text-[#3D3833]">${record.theme}</td>
+                    <td class="px-4 py-3 text-xs text-[#7A726A]">${record.mode}</td>
+                    <td class="px-4 py-3"><span class="${badgeClass}">${record.result}</span></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Custom Modal Functions
+        function showModal(title, message, iconClass) {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            document.getElementById('modal-icon').className = `fa-solid ${iconClass}`;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
